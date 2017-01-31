@@ -7,85 +7,44 @@
 //
 
 #import "ViewController.h"
+#import "PointRecordManager.h"
+#import "LabelCell.h"
+#import "DouDiZhuView.h"
 
-@interface LabelCell : UICollectionViewCell
-
-@property (nonatomic, strong) NSString *content;
-
-@end
-
-@interface LabelCell()
-
-@property (nonatomic, strong) UILabel *contentLabel;
-
-@end
-@implementation LabelCell
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        _contentLabel = [[UILabel alloc] initWithFrame:frame];
-        _contentLabel.textAlignment = NSTextAlignmentCenter;
-        [self addSubview:_contentLabel];
-    }
-    return  self;
-}
-
-- (void)setContent:(NSString *)content
-{
-    _content = content;
-    _contentLabel.text = content;
-}
-
-- (void)layoutSubviews
-{
-    self.contentLabel.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-    [super layoutSubviews];
-}
-
-@end
-
-@interface ViewController () <UICollectionViewDelegate, UICollectionViewDataSource>
+@interface ViewController ()
 
 @property (nonatomic, strong) NSMutableArray *roundRecord;
-@property (nonatomic, strong) UICollectionView *collectionView;
-@property (nonatomic, strong) UICollectionViewFlowLayout *layout;
 @property (nonatomic, strong) UIButton *playAgain;
 @property (nonatomic, strong) UIStepper *stepper;
-@property (nonatomic, strong) LabelCell *bindCell;
-@property (nonatomic, strong) NSMutableArray *currentPlayer;
-@property (nonatomic, assign) BOOL hasSelectFarmer;
-@property (nonatomic, assign) BOOL canPlayMore;
-@property (nonatomic, assign) NSInteger hostIndex;
-@property (nonatomic, strong) NSSet *set;
-@property (nonatomic, assign) NSInteger lastValue;
-@property (nonatomic, strong) NSMutableArray *titleArray;
+@property (nonatomic, strong) UIButton *saveButton;
+@property (nonatomic, strong) UIButton *viewHistoryButton;
+@property (nonatomic, strong) DouDiZhuView *mainView;
 
 @end
 
 static const NSInteger columNum = 5;
-static const CGFloat cellHeight = 45;
 @implementation ViewController
 
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    _titleArray = [NSMutableArray array];
-    NSArray *titleName = @[@"参赛选手", @"老丁", @"老王", @"小丁", @"倍数"];
-    for (NSInteger index = 0; index < 5; index ++) {
-        UILabel *label = [UILabel new];
-        label.textAlignment = NSTextAlignmentCenter;
-        label.text = titleName[index];
-        [_titleArray addObject:label];
-        [self.view addSubview:label];
-    }
-    
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    self.extendedLayoutIncludesOpaqueBars = NO;
+    self.modalPresentationCapturesStatusBarAppearance = NO;
+    self.view.backgroundColor = [UIColor whiteColor];
+    _mainView = [[DouDiZhuView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-30-64)];
+    __weak typeof(self) _weak_self = self;
+    _mainView.playerWinBlock = ^(NSInteger index) {
+        [_weak_self playerWin:index];
+    };
+    _mainView.selectPlayerBlock = ^(NSInteger index) {
+        [_weak_self selectPlayer:index];
+    };
     _roundRecord = [NSMutableArray array];
     [_roundRecord addObjectsFromArray:@[@"Round 1",@"农民", @"农民", @"农民", @"1"]];
     [_roundRecord addObjectsFromArray:@[@"结算",@"0", @"0", @"0", @" "]];
+    _mainView.roundRecord = self.roundRecord;
     
-    _lastValue = 1;
     _stepper = [UIStepper new];
     _stepper.value = 1.f;
     _stepper.minimumValue = 1;
@@ -97,23 +56,32 @@ static const CGFloat cellHeight = 45;
     [_playAgain addTarget:self action:@selector(playAgainAction) forControlEvents:UIControlEventTouchUpInside];
     [_playAgain setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     
-    _set = [[NSSet alloc] initWithObjects:@0, @1, @2, nil];
+    _saveButton = [UIButton new];
+    [_saveButton setTitle:@"保存" forState:UIControlStateNormal];
+    [_saveButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [_saveButton addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
     [self resetCurrentPlayer];
+    [self.view addSubview:_saveButton];
     [self.view addSubview:_stepper];
     [self.view addSubview:_playAgain];
-    [self.view addSubview:self.collectionView];
+    [self.view addSubview:self.mainView];
     // Do any additional setup after loading the view, typically from a nib.
+}
+- (void)save
+{
+    [[PointRecordManager shareInstance] createFileAndWriteData:self.mainView.roundRecord.copy];
 }
 
 - (void)playAgainAction
 {
-    if (!self.canPlayMore) {
+    if (!self.mainView.canPlayMore) {
         return;
     }
     NSString *round = [NSString stringWithFormat:@"Round %ld", self.roundRecord.count/columNum];
-    self.hasSelectFarmer = NO;
-    self.canPlayMore = NO;
-    self.lastValue = 1;
+    self.mainView.hasSelectFarmer = NO;
+    self.mainView.canPlayMore = NO;
+    self.mainView.lastValue = 1;
+    self.stepper.value = 1.0;
     [self resetCurrentPlayer];
     [self.roundRecord insertObject:round atIndex:self.roundRecord.count - columNum];
     [self.roundRecord insertObject:@"农民" atIndex:self.roundRecord.count - columNum];
@@ -121,21 +89,18 @@ static const CGFloat cellHeight = 45;
     [self.roundRecord insertObject:@"农民" atIndex:self.roundRecord.count - columNum];
     [self.roundRecord insertObject:@"1" atIndex:self.roundRecord.count - columNum];
     
-    [self.collectionView reloadData];
+    [self.mainView reloadData];
 }
 
 - (void)viewDidLayoutSubviews
 {
-    self.stepper.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - self.stepper.frame.size.width, [UIScreen mainScreen].bounds.size.height - 30, self.stepper.frame.size.width, self.stepper.frame.size.height);
+    self.stepper.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - self.stepper.frame.size.width, self.mainView.frame.origin.y+self.mainView.frame.size.height, self.stepper.frame.size.width, self.stepper.frame.size.height);
     
-    NSInteger index = 0;
-    CGFloat labelWidth = [UIScreen mainScreen].bounds.size.width / columNum;
-    for (UILabel *label in self.titleArray) {
-        label.frame = CGRectMake(labelWidth * index, 30, labelWidth, cellHeight);
-        index++;
-    }
     [self.playAgain sizeToFit];
-    self.playAgain.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height - 30, self.playAgain.frame.size.width, self.playAgain.frame.size.height);
+    self.playAgain.frame = CGRectMake(0, self.mainView.frame.origin.y+self.mainView.frame.size.height, self.playAgain.frame.size.width, self.playAgain.frame.size.height);
+    
+    [self.saveButton sizeToFit];
+    self.saveButton.frame = CGRectMake(self.playAgain.frame.size.width + 30, self.mainView.frame.origin.y+self.mainView.frame.size.height, self.saveButton.frame.size.width, self.saveButton.frame.size.height);
     
     [super viewDidLayoutSubviews];
 }
@@ -144,138 +109,79 @@ static const CGFloat cellHeight = 45;
 {
     if (self.stepper.value < 1.1 && self.stepper.value > 0.9) {
         self.stepper.stepValue = 1;
-        self.lastValue = 1;
+        self.mainView.lastValue = 1;
         return;
     }
-    if (self.stepper.value > self.lastValue) {
-        self.stepper.value = self.lastValue * 2;
-        self.lastValue = self.stepper.value;
+    if (self.stepper.value > self.mainView.lastValue) {
+        self.stepper.value = self.mainView.lastValue * 2;
+        self.mainView.lastValue = self.stepper.value;
         return;
     }
-    self.stepper.value = (int)self.lastValue / 2;
-    self.lastValue = self.stepper.value;
+    self.stepper.value = (int)self.mainView.lastValue / 2;
+    self.mainView.lastValue = self.stepper.value;
 }
 
 - (void)showChange
 {
-    self.bindCell.content = [NSString stringWithFormat:@"%d", (int)_stepper.value];
-}
-
-- (UICollectionView *)collectionView
-{
-    if (!_collectionView) {
-        CGRect collectionSize = CGRectMake(0, 30 + cellHeight + 10 , [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - 60 - cellHeight - 10);
-        _collectionView = [[UICollectionView alloc] initWithFrame:collectionSize collectionViewLayout:self.layout];
-        
-        _collectionView.backgroundColor = [UIColor whiteColor];
-        _collectionView.delegate = self;
-        _collectionView.dataSource = self;
-        [_collectionView registerClass:[LabelCell class] forCellWithReuseIdentifier:@"LabelCell"];
-    }
-    return _collectionView;
-}
-
-- (UICollectionViewFlowLayout *)layout
-{
-    if (!_layout) {
-        _layout = [UICollectionViewFlowLayout new];
-        _layout.itemSize = CGSizeMake([UIScreen mainScreen].bounds.size.width / columNum, cellHeight);
-        _layout.minimumInteritemSpacing = 0;
-    }
-    return _layout;
-}
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
-    return self.roundRecord.count;
-}
-
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    LabelCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"LabelCell" forIndexPath:indexPath];
-    cell.content = [self.roundRecord objectAtIndex:indexPath.row];
-    if (indexPath.row % columNum == 4 && indexPath.row + columNum == self.roundRecord.count - 1) {
-        self.bindCell = cell;
-    }
-    
-    NSInteger remain = indexPath.row % columNum;
-    NSInteger colum = floor(indexPath.row / columNum);
-    NSInteger maxColum = floor(self.roundRecord.count / columNum);//就是这么奇葩的逻辑
-    if (remain < 4 && remain > 0 && colum == maxColum - 2) {
-        self.currentPlayer[remain - 1] = cell;
-    }
-    return cell;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger remain = indexPath.row % columNum;
-    NSInteger colum = floor(indexPath.row / columNum);
-    NSInteger maxColum = floor(self.roundRecord.count / columNum);
-    if (remain < 4 && remain > 0 && colum == maxColum - 2) {
-        if (self.hasSelectFarmer) {
-            [self playerWin:remain-1];
-        } else {
-            [self selectPlayer:remain-1];
-        }
-    }
+    self.mainView.bindCell.content = [NSString stringWithFormat:@"%d", (int)_stepper.value];
 }
 
 - (void)selectPlayer:(NSInteger)player
 {
-    if (self.canPlayMore == YES) {
+    if (self.mainView.canPlayMore == YES) {
         return;
     }
-    ((LabelCell *)self.currentPlayer[player]).content = @"地主";
-    self.hostIndex = player;
-    self.hasSelectFarmer = YES;
-    self.canPlayMore = NO;
+    ((LabelCell *)self.mainView.currentPlayer[player]).content = @"地主";
+    self.mainView.hostIndex = player;
+    self.mainView.hasSelectFarmer = YES;
+    self.mainView.canPlayMore = NO;
     [self asynData];
 }
 
 - (void)asynData
 {
     NSMutableArray *array = [NSMutableArray array];
-    [self.currentPlayer enumerateObjectsUsingBlock:^(LabelCell *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [self.mainView.currentPlayer enumerateObjectsUsingBlock:^(LabelCell *obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [array addObject:obj.content];
     }];
     [self.roundRecord replaceObjectsInRange:NSMakeRange(self.roundRecord.count - 4 - columNum, 3) withObjectsFromArray:array];
+    self.roundRecord[self.roundRecord.count-columNum-1] = [NSString stringWithFormat:@"%d", (int)self.stepper.value];
 }
 
 - (void)playerWin:(NSInteger)player
 {
-    if (self.hostIndex == player) {
-        LabelCell *cell = self.currentPlayer[player];
-        cell.content = [NSString stringWithFormat:@"%ld", [self.bindCell.content integerValue] * 2];
-        NSMutableSet *set = [self.set mutableCopy];
+    if (self.mainView.hostIndex == player) {
+        LabelCell *cell = self.mainView.currentPlayer[player];
+        cell.content = [NSString stringWithFormat:@"%ld", [self.mainView.bindCell.content integerValue] * 2];
+        NSMutableSet *set = [self.mainView.set mutableCopy];
         [set minusSet:[[NSSet alloc] initWithObjects:@(player), nil]];
         [set enumerateObjectsUsingBlock:^(NSNumber *obj, BOOL * _Nonnull stop) {
-            LabelCell *cell = self.currentPlayer[obj.integerValue];
-            cell.content = [NSString stringWithFormat:@"%ld", -[self.bindCell.content integerValue]];
+            LabelCell *cell = self.mainView.currentPlayer[obj.integerValue];
+            cell.content = [NSString stringWithFormat:@"%ld", -[self.mainView.bindCell.content integerValue]];
         }];
     } else {
-        LabelCell *cell = self.currentPlayer[self.hostIndex];
-        cell.content = [NSString stringWithFormat:@"%ld", - [self.bindCell.content integerValue] * 2];
-        NSMutableSet *set = [self.set mutableCopy];
-        [set minusSet:[[NSSet alloc] initWithObjects:@(self.hostIndex), nil]];
+        LabelCell *cell = self.mainView.currentPlayer[self.mainView.hostIndex];
+        cell.content = [NSString stringWithFormat:@"%ld", - [self.mainView.bindCell.content integerValue] * 2];
+        NSMutableSet *set = [self.mainView.set mutableCopy];
+        [set minusSet:[[NSSet alloc] initWithObjects:@(self.mainView.hostIndex), nil]];
         [set enumerateObjectsUsingBlock:^(NSNumber *obj, BOOL * _Nonnull stop) {
-            LabelCell *cell = self.currentPlayer[obj.integerValue];
-            cell.content = [NSString stringWithFormat:@"%ld", [self.bindCell.content integerValue]];
+            LabelCell *cell = self.mainView.currentPlayer[obj.integerValue];
+            cell.content = [NSString stringWithFormat:@"%ld", [self.mainView.bindCell.content integerValue]];
         }];
     }
-    self.canPlayMore = YES;
+    self.mainView.canPlayMore = YES;
     [self asynData];
     [self reCalculateSum];
 }
 
 - (void)resetCurrentPlayer
 {
-    self.currentPlayer = [@[[LabelCell new], [LabelCell new], [LabelCell new]] mutableCopy];
+    self.mainView.currentPlayer = [@[[LabelCell new], [LabelCell new], [LabelCell new]] mutableCopy];
 }
 
 - (void)reCalculateSum
 {
-    self.hasSelectFarmer = NO;
+    self.mainView.hasSelectFarmer = NO;
     [self resetCurrentPlayer];
     for (NSInteger col = 1; col < 4; col ++) {
         NSInteger num = 0;
@@ -286,7 +192,7 @@ static const CGFloat cellHeight = 45;
         NSInteger index = self.roundRecord.count - columNum + col;
         self.roundRecord[index] = [NSString stringWithFormat:@"%ld", num];
     }
-    [self.collectionView reloadData];
+    [self.mainView reloadData];
     [[NSUserDefaults standardUserDefaults] setObject:self.roundRecord forKey:@"playRecord"];
 }
 

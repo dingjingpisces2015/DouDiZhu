@@ -13,6 +13,11 @@
 		C63A20671E3B65B0008591F9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C63A20651E3B65B0008591F9 /* Main.storyboard */; };
 		C63A20691E3B65B0008591F9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C63A20681E3B65B0008591F9 /* Assets.xcassets */; };
 		C63A206C1E3B65B0008591F9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C63A206A1E3B65B0008591F9 /* LaunchScreen.storyboard */; };
+		C63A20751E3CB24E008591F9 /* DouDiZhuView.m in Sources */ = {isa = PBXBuildFile; fileRef = C63A20741E3CB24E008591F9 /* DouDiZhuView.m */; };
+		C63A20781E3D8903008591F9 /* PointRecordManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C63A20771E3D8903008591F9 /* PointRecordManager.m */; };
+		C63A207B1E3D959A008591F9 /* LabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C63A207A1E3D959A008591F9 /* LabelCell.m */; };
+		C6B76DAA1E3F6450005E9DDA /* HistoryList.m in Sources */ = {isa = PBXBuildFile; fileRef = C6B76DA91E3F6450005E9DDA /* HistoryList.m */; };
+		C6B76DAD1E3F6BB4005E9DDA /* HistoryDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C6B76DAC1E3F6BB4005E9DDA /* HistoryDetailViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +31,16 @@
 		C63A20681E3B65B0008591F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C63A206B1E3B65B0008591F9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C63A206D1E3B65B0008591F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C63A20731E3CB24E008591F9 /* DouDiZhuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DouDiZhuView.h; sourceTree = "<group>"; };
+		C63A20741E3CB24E008591F9 /* DouDiZhuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DouDiZhuView.m; sourceTree = "<group>"; };
+		C63A20761E3D8903008591F9 /* PointRecordManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointRecordManager.h; sourceTree = "<group>"; };
+		C63A20771E3D8903008591F9 /* PointRecordManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PointRecordManager.m; sourceTree = "<group>"; };
+		C63A20791E3D959A008591F9 /* LabelCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelCell.h; sourceTree = "<group>"; };
+		C63A207A1E3D959A008591F9 /* LabelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LabelCell.m; sourceTree = "<group>"; };
+		C6B76DA81E3F6450005E9DDA /* HistoryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryList.h; sourceTree = "<group>"; };
+		C6B76DA91E3F6450005E9DDA /* HistoryList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryList.m; sourceTree = "<group>"; };
+		C6B76DAB1E3F6BB4005E9DDA /* HistoryDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryDetailViewController.h; sourceTree = "<group>"; };
+		C6B76DAC1E3F6BB4005E9DDA /* HistoryDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryDetailViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,9 +75,19 @@
 			children = (
 				C63A205F1E3B65B0008591F9 /* AppDelegate.h */,
 				C63A20601E3B65B0008591F9 /* AppDelegate.m */,
+				C6B76DA81E3F6450005E9DDA /* HistoryList.h */,
+				C6B76DA91E3F6450005E9DDA /* HistoryList.m */,
 				C63A20621E3B65B0008591F9 /* ViewController.h */,
 				C63A20631E3B65B0008591F9 /* ViewController.m */,
+				C63A20761E3D8903008591F9 /* PointRecordManager.h */,
+				C6B76DAB1E3F6BB4005E9DDA /* HistoryDetailViewController.h */,
+				C6B76DAC1E3F6BB4005E9DDA /* HistoryDetailViewController.m */,
+				C63A20771E3D8903008591F9 /* PointRecordManager.m */,
+				C63A20731E3CB24E008591F9 /* DouDiZhuView.h */,
+				C63A20741E3CB24E008591F9 /* DouDiZhuView.m */,
 				C63A20651E3B65B0008591F9 /* Main.storyboard */,
+				C63A20791E3D959A008591F9 /* LabelCell.h */,
+				C63A207A1E3D959A008591F9 /* LabelCell.m */,
 				C63A20681E3B65B0008591F9 /* Assets.xcassets */,
 				C63A206A1E3B65B0008591F9 /* LaunchScreen.storyboard */,
 				C63A206D1E3B65B0008591F9 /* Info.plist */,
@@ -110,7 +135,7 @@
 				TargetAttributes = {
 					C63A20581E3B65B0008591F9 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = TY8LRYL2L5;
+						DevelopmentTeam = T3ZLXP4K5B;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -151,8 +176,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C63A20751E3CB24E008591F9 /* DouDiZhuView.m in Sources */,
 				C63A20641E3B65B0008591F9 /* ViewController.m in Sources */,
+				C63A207B1E3D959A008591F9 /* LabelCell.m in Sources */,
 				C63A20611E3B65B0008591F9 /* AppDelegate.m in Sources */,
+				C6B76DAD1E3F6BB4005E9DDA /* HistoryDetailViewController.m in Sources */,
+				C63A20781E3D8903008591F9 /* PointRecordManager.m in Sources */,
+				C6B76DAA1E3F6450005E9DDA /* HistoryList.m in Sources */,
 				C63A205E1E3B65B0008591F9 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -219,7 +249,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -261,7 +291,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -273,7 +303,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = TY8LRYL2L5;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = T3ZLXP4K5B;
 				INFOPLIST_FILE = DouDiZhu/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Cookie.DouDiZhu;
@@ -285,7 +316,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = TY8LRYL2L5;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = T3ZLXP4K5B;
 				INFOPLIST_FILE = DouDiZhu/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Cookie.DouDiZhu;
@@ -312,6 +344,7 @@
 				C63A20721E3B65B0008591F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
